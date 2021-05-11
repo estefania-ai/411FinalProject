@@ -32,7 +32,9 @@ public class Tickets extends JFrame implements ActionListener {
 	JMenuItem mnuItemUpdate;
 	JMenuItem mnuItemDelete;
 	JMenuItem mnuItemOpenTicket;
+  JMenuItem mnuItemUpdateTicket;
 	JMenuItem mnuItemViewTicket;
+  JMenuItem mnuItemCloseTicket;
 
 	public Tickets(Boolean isAdmin) {
 
@@ -50,8 +52,8 @@ public class Tickets extends JFrame implements ActionListener {
 		mnuItemExit = new JMenuItem("Exit");
 		// add to File main menu item
 		mnuFile.add(mnuItemExit);
-
-		// initialize first sub menu items for Admin main menu
+    if(chkIfAdmin){
+      	// initialize first sub menu items for Admin main menu
 		mnuItemUpdate = new JMenuItem("Update Ticket");
 		// add to Admin main menu item
 		mnuAdmin.add(mnuItemUpdate);
@@ -61,6 +63,8 @@ public class Tickets extends JFrame implements ActionListener {
 		// add to Admin main menu item
 		mnuAdmin.add(mnuItemDelete);
 
+    }
+	
 		// initialize first sub menu item for Tickets main menu
 		mnuItemOpenTicket = new JMenuItem("Open Ticket");
 		// add to Ticket Main menu item
@@ -70,15 +74,25 @@ public class Tickets extends JFrame implements ActionListener {
 		mnuItemViewTicket = new JMenuItem("View Ticket");
 		// add to Ticket Main menu item
 		mnuTickets.add(mnuItemViewTicket);
-
+    if(!chkIfAdmin){
+      mnuItemUpdateTicket = new JMenuItem("Update Ticket");
+		// add to Ticket Main menu item
+		mnuTickets.add(mnuItemUpdateTicket);
+    }
 		// initialize any more desired sub menu items below
-
+		mnuItemCloseTicket = new JMenuItem("Close Ticket");
+		mnuTickets.add(mnuItemCloseTicket);
 		/* Add action listeners for each desired menu item *************/
 		mnuItemExit.addActionListener(this);
-		mnuItemUpdate.addActionListener(this);
-		mnuItemDelete.addActionListener(this);
+    if(chkIfAdmin){
+      mnuItemUpdate.addActionListener(this);
+		  mnuItemDelete.addActionListener(this);
+    }else{
+      mnuItemUpdateTicket.addActionListener(this);
+    }
 		mnuItemOpenTicket.addActionListener(this);
 		mnuItemViewTicket.addActionListener(this);
+    mnuItemCloseTicket.addActionListener(this);
 
 		 /*
 		  * continue implementing any other desired sub menu items (like 
@@ -94,7 +108,9 @@ public class Tickets extends JFrame implements ActionListener {
 		// create JMenu bar
 		JMenuBar bar = new JMenuBar();
 		bar.add(mnuFile); // add main menu items in order, to JMenuBar
-		bar.add(mnuAdmin);
+    if(chkIfAdmin){
+      bar.add(mnuAdmin);
+    }
 		bar.add(mnuTickets);
 		// add menu bar components to frame
 		setJMenuBar(bar);
@@ -122,10 +138,10 @@ public class Tickets extends JFrame implements ActionListener {
 			// get ticket information
 			String ticketName = JOptionPane.showInputDialog(null, "Enter your name");
 			String ticketDesc = JOptionPane.showInputDialog(null, "Enter a ticket description");
-
+      String priority = JOptionPane.showInputDialog(null, "Enter the ticket priority");
 			// insert ticket information to database
 
-			int id = dao.insertRecords(ticketName, ticketDesc);
+			int id = dao.insertRecords(ticketName, ticketDesc, priority);
 
 			// display results if successful or not to console / dialog box
 			if (id != 0) {
@@ -156,7 +172,25 @@ public class Tickets extends JFrame implements ActionListener {
 		 * continue implementing any other desired sub menu items (like for update and
 		 * delete sub menus for example) with similar syntax & logic as shown above
 		 */
+    else if (e.getSource() == mnuItemUpdate | e.getSource() == mnuItemUpdateTicket){
+      	// get ticket information
+	    int ticket = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the id of the ticket you want to pdate"));
+			String ticketDesc = JOptionPane.showInputDialog(null, "Enter an updated ticket description");
+      dao.updateRecords(ticket, ticketDesc);
+      
+    }
 
+    else if (e.getSource() == mnuItemDelete){
+      int ticket = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the id of the ticket you want to delete"));
+      dao.deleteRecords(ticket);
+    }
+
+    else if (e.getSource() == mnuItemCloseTicket){
+      int ticket = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter the id of the ticket you want to close"));
+      dao.updateRecords(ticket, java.time.LocalDate.now());
+    }
 	}
+
+    
 
 }
