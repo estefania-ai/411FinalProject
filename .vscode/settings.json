@@ -1,0 +1,11 @@
+{
+  "java.project.referencedLibraries": {
+    "include": [
+      "/Users/estefanialopez/Desktop/ITMD411_Estefania_Tickets/lib/mysql-connector-java-8.0.23",
+      "lib/mysql-connector-java-8.0.23.jar"
+    ],
+    "exclude": [
+      "/Users/estefanialopez/Downloads/mysql-connector-java-8.0.23/mysql-connector-java-8.0.23.jar"
+    ]
+  }
+}
