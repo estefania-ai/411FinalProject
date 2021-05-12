@@ -24,6 +24,7 @@ public class Dao {
 	  try{
       Class.forName("com.mysql.cj.jdbc.Driver");
     } catch(Exception e){
+      System.out.println("Here");
       e.printStackTrace();
     }
 	}
@@ -37,6 +38,7 @@ public class Dao {
 							+ "&user=fp411&password=411");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+      System.out.println("Here2");
 			e.printStackTrace();
 		}
 		return connect;
@@ -46,8 +48,8 @@ public class Dao {
 
 	public void createTables() {
 		// variables for SQL Query table creations
-		final String createTicketsTable = "CREATE TABLE este_tickets(ticket_id INT AUTO_INCREMENT PRIMARY KEY, ticket_issuer VARCHAR(30), ticket_description VARCHAR(200), start_date DATE, end_date DATE, ticket_priority VARCHAR(6))";
-		final String createUsersTable = "CREATE TABLE este_users(uid INT AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(30), upass VARCHAR(30), admin int)";
+		final String createTicketsTable = "CREATE TABLE elop_tickets(ticket_id INT AUTO_INCREMENT PRIMARY KEY, uid INT, ticket_issuer VARCHAR(30), ticket_description VARCHAR(200), start_date DATE, end_date DATE, ticket_priority VARCHAR(6))";
+		final String createUsersTable = "CREATE TABLE elop_users(uid INT AUTO_INCREMENT PRIMARY KEY, uname VARCHAR(30), upass VARCHAR(30), admin int)";
 
 		try {
 
@@ -64,11 +66,12 @@ public class Dao {
 			statement.close();
 			connect.close();
 		} catch (Exception e) {
+      System.out.println("Here3");
 			System.out.println(e.getMessage());
 		}
 		// add users to user table
-    System.out.println("adding users");
-		addUsers();
+    //System.out.println("adding users");
+		//addUsers();
 	}
 
 	public void addUsers() {
@@ -91,6 +94,7 @@ public class Dao {
         System.out.println(line);
 			}
 		} catch (Exception e) {
+      System.out.println("Here4");
 			System.out.println("There was a problem loading the file");
 		}
 
@@ -104,7 +108,7 @@ public class Dao {
 			// and PASS (insert) that data into your User table
 			for (List<String> rowData : array) {
 
-				sql = "insert into este_users(uname,upass,admin) " + "values('" + rowData.get(0) + "'," + " '"
+				sql = "insert into elop_users(uname,upass,admin) " + "values('" + rowData.get(0) + "'," + " '"
 						+ rowData.get(1) + "','" + rowData.get(2) + "');";
 				statement.executeUpdate(sql);
 			}
@@ -114,16 +118,17 @@ public class Dao {
 			statement.close();
 
 		} catch (Exception e) {
+      System.out.println("Here5");
 			System.out.println(e.getMessage());
 		}
 	}
 
-	public int insertRecords(String ticketName, String ticketDesc, String priority) {
+	public int insertRecords(int uid, String ticketName, String ticketDesc, String priority) {
 		int id = 0;
 		try {
 			statement = getConnection().createStatement();
-			statement.executeUpdate("Insert into este_tickets" + "(ticket_issuer, ticket_description, start_date, ticket_priority) values(" 
-      + " '" + ticketName + "','" + ticketDesc + "','" + java.time.LocalDate.now() + "','" + priority + "')", Statement.RETURN_GENERATED_KEYS);
+			statement.executeUpdate("Insert into elop_tickets" + "(uid, ticket_issuer, ticket_description, start_date, ticket_priority) values(" 
+      + " '" + uid + "','" + ticketName + "','" + ticketDesc + "','" + java.time.LocalDate.now() + "','" + priority + "')", Statement.RETURN_GENERATED_KEYS);
 
 			// retrieve ticket id number newly auto generated upon record insertion
 			ResultSet resultSet = null;
@@ -135,6 +140,7 @@ public class Dao {
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+      System.out.println("Here6");
 			e.printStackTrace();
 		}
 		return id;
@@ -145,20 +151,22 @@ public class Dao {
 		ResultSet results = null;
 		try {
 			statement = connect.createStatement();
-			results = statement.executeQuery("SELECT * FROM este_tickets");
+			results = statement.executeQuery("SELECT * FROM elop_tickets");
 			//connect.close();
 		} catch (SQLException e1) {
+      System.out.println("Here7");
 			e1.printStackTrace();
 		}
 		return results;
 	}
-  public ResultSet readRecords(int id) {
+  public ResultSet readRecords(int usrid) {
 		ResultSet results = null;
 		try {
 			statement = connect.createStatement();
-			results = statement.executeQuery("SELECT * FROM este_users WHERE uid  = " + id);
+			results = statement.executeQuery("SELECT * FROM elop_tickets WHERE uid  =  " + usrid );
 			//connect.close();
 		} catch (SQLException e1) {
+      System.out.println("Here8");
 			e1.printStackTrace();
 		}
 		return results;
@@ -168,11 +176,12 @@ public class Dao {
     System.out.println("Creating update statement...");
     try {
       statement = connect.createStatement();
-      String sql = "UPDATE este_tickets " +
+      String sql = "UPDATE elop_tickets " +
                   "SET ticket_description = ' " + updatedDesc + " '  WHERE ticket_id  = " + id;
       System.out.println("Update query is "+ sql);
       statement.executeUpdate(sql);
     }catch(SQLException e2){
+      System.out.println("Here9");
       e2.printStackTrace();
     }
   }
@@ -181,11 +190,12 @@ public class Dao {
     System.out.println("Creating update statement...");
     try {
       statement = connect.createStatement();
-      String sql = "UPDATE este_tickets " +
+      String sql = "UPDATE elop_tickets " +
                   "SET end_date = ' " + ld + " '  WHERE ticket_id  = " + id;
       System.out.println("Update query is "+ sql);
       statement.executeUpdate(sql);
     }catch(SQLException e2){
+      System.out.println("Here10");
       e2.printStackTrace();
     }
   }
@@ -196,9 +206,10 @@ public class Dao {
       try{
         statement = connect.createStatement();
       }catch(SQLException e){
+        System.out.println("Here11");
         e.printStackTrace();
       }
-      String sql = "DELETE FROM este_tickets  " +
+      String sql = "DELETE FROM elop_tickets  " +
                    "WHERE ticket_id = " + id;
       System.out.println("Delete query is "+ sql);
      int response = JOptionPane.showConfirmDialog(null, " Delete ticket # " + id + "?",
@@ -210,6 +221,7 @@ public class Dao {
       try{
         statement.executeUpdate(sql);
       }catch(SQLException e){
+        System.out.println("Here12");
         e.printStackTrace();
       }
       System.out.println("Record deleted");

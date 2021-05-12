@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import java.sql.Statement;
 
 @SuppressWarnings("serial")
 public class Login extends JFrame {
@@ -56,37 +57,62 @@ public class Login extends JFrame {
 
 		btn.addActionListener(new ActionListener() {
 			int count = 0; // count agent
+      int uid ;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean admin = false;
 				count = count + 1;
+        
 				// verify credentials of user (MAKE SURE TO CHANGE TO YOUR TABLE NAME BELOW)
 
-				String query = "SELECT * FROM este_users WHERE uname = ? and upass = ?;";
+        String query2 = "SELECT uid FROM elop_users WHERE uname = ? and upass = ?;";
+				try (PreparedStatement stmt2 = conn.getConnection().prepareStatement(query2)) {
+					stmt2.setString(1, txtUname.getText());
+					stmt2.setString(2, txtPassword.getText());
+					ResultSet rs = stmt2.executeQuery();
+					if (rs.next()) {
+						uid = rs.getInt(1);
+            System.out.println("uid -> "+uid);
+					} else
+						lblStatus.setText("error getting uid");
+				} catch (SQLException ex) {
+          System.out.println("Here13");
+					ex.printStackTrace();
+				}
+
+				String query = "SELECT * FROM elop_users WHERE uname = ? and upass = ?;";
 				try (PreparedStatement stmt = conn.getConnection().prepareStatement(query)) {
 					stmt.setString(1, txtUname.getText());
 					stmt.setString(2, txtPassword.getText());
+          
           System.out.println("user an pass" + txtUname.getText()+ txtPassword.getText());
 					ResultSet rs = stmt.executeQuery();
 					if (rs.next()) {
 						admin = rs.getBoolean("admin"); // get table column value
-						new Tickets(admin); //open Tickets file / GUI interface
+						new Tickets(admin, uid); //open Tickets file / GUI interface
 						setVisible(false); // HIDE THE FRAME
 						dispose(); // CLOSE OUT THE WINDOW
 					} else
 						lblStatus.setText("Try again! " + (3 - count) + " / 3 attempt(s) left");
 				} catch (SQLException ex) {
+          System.out.println("Here14");
 					ex.printStackTrace();
 				}
+        
+        
  			 
 			}
 		});
 		btnExit.addActionListener(e -> System.exit(0));
 
 		setVisible(true); // SHOW THE FRAME
+
+    
+
 	}
 
+ 
 	public static void main(String[] args) {
 
 		new Login();

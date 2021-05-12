@@ -35,14 +35,16 @@ public class Tickets extends JFrame implements ActionListener {
   JMenuItem mnuItemUpdateTicket;
 	JMenuItem mnuItemViewTicket;
   JMenuItem mnuItemCloseTicket;
+  int usrid;
 
-	public Tickets(Boolean isAdmin) {
-
+	public Tickets(Boolean isAdmin, int uid) {
+    usrid= uid;
 		chkIfAdmin = isAdmin;
 		createMenu();
 		prepareGUI();
 
 	}
+  
 
 	private void createMenu() {
 
@@ -141,7 +143,7 @@ public class Tickets extends JFrame implements ActionListener {
       String priority = JOptionPane.showInputDialog(null, "Enter the ticket priority");
 			// insert ticket information to database
 
-			int id = dao.insertRecords(ticketName, ticketDesc, priority);
+			int id = dao.insertRecords(usrid, ticketName, ticketDesc, priority);
 
 			// display results if successful or not to console / dialog box
 			if (id != 0) {
@@ -155,16 +157,22 @@ public class Tickets extends JFrame implements ActionListener {
 
 			// retrieve all tickets details for viewing in JTable
 			try {
-
+        JTable jt;
 				// Use JTable built in functionality to build a table model and
 				// display the table model off your result set!!!
-				JTable jt = new JTable(ticketsJTable.buildTableModel(dao.readRecords()));
+        if (chkIfAdmin){
+          jt = new JTable(ticketsJTable.buildTableModel(dao.readRecords()));
+        }else{
+          jt = new JTable(ticketsJTable.buildTableModel(dao.readRecords(usrid)));
+        }
+				
 				jt.setBounds(30, 40, 200, 400);
 				JScrollPane sp = new JScrollPane(jt);
 				add(sp);
 				setVisible(true); // refreshes or repaints frame on screen
 
 			} catch (SQLException e1) {
+        System.out.println("Here15");
 				e1.printStackTrace();
 			}
 		}
