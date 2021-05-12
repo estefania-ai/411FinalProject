@@ -146,12 +146,12 @@ public class Dao {
 		return id;
 
 	}
-
+  //two read methods depending on user role
 	public ResultSet readRecords() {
 		ResultSet results = null;
 		try {
 			statement = connect.createStatement();
-			results = statement.executeQuery("SELECT * FROM elop_tickets");
+			results = statement.executeQuery("SELECT ticket_id, ticket_issuer, ticket_description, start_date, end_date, ticket_priority FROM elop_tickets");
 			//connect.close();
 		} catch (SQLException e1) {
       System.out.println("Here7");
@@ -163,7 +163,7 @@ public class Dao {
 		ResultSet results = null;
 		try {
 			statement = connect.createStatement();
-			results = statement.executeQuery("SELECT * FROM elop_tickets WHERE uid  =  " + usrid );
+			results = statement.executeQuery("SELECT ticket_id, ticket_issuer, ticket_description, start_date, end_date, ticket_priority FROM elop_tickets WHERE uid  =  " + usrid );
 			//connect.close();
 		} catch (SQLException e1) {
       System.out.println("Here8");
@@ -185,7 +185,7 @@ public class Dao {
       e2.printStackTrace();
     }
   }
-
+  //update record mwthod to close the ticket and add end date
   public void updateRecords(int id, LocalDate ld){
     System.out.println("Creating update statement...");
     try {

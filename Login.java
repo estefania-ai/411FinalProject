@@ -64,8 +64,8 @@ public class Login extends JFrame {
 				boolean admin = false;
 				count = count + 1;
         
-				// verify credentials of user (MAKE SURE TO CHANGE TO YOUR TABLE NAME BELOW)
-
+			
+ //find usid for user creating ticket
         String query2 = "SELECT uid FROM elop_users WHERE uname = ? and upass = ?;";
 				try (PreparedStatement stmt2 = conn.getConnection().prepareStatement(query2)) {
 					stmt2.setString(1, txtUname.getText());
@@ -80,7 +80,7 @@ public class Login extends JFrame {
           System.out.println("Here13");
 					ex.printStackTrace();
 				}
-
+       	// verify credentials of user (MAKE SURE TO CHANGE TO YOUR TABLE NAME BELOW)
 				String query = "SELECT * FROM elop_users WHERE uname = ? and upass = ?;";
 				try (PreparedStatement stmt = conn.getConnection().prepareStatement(query)) {
 					stmt.setString(1, txtUname.getText());
